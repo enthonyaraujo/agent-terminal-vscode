@@ -1,5 +1,5 @@
 {
-  "name": "agent-terminal",
+  "name": "agent-terminal-vscode",
   "displayName": "Agent Terminal",
   "description": "Dedicated sidebar terminal for AI CLI agents (Claude, Codex, Gemini, etc.) running alongside VS Code's native terminal.",
   "version": "1.0.0",
