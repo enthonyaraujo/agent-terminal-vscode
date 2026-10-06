@@ -1,0 +1,191 @@
+{
+  "name": "agent-terminal",
+  "displayName": "Agent Terminal",
+  "description": "Dedicated sidebar terminal for AI CLI agents (Claude, Codex, Gemini, etc.) running alongside VS Code's native terminal.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enthony/agent-terminal-vscode"
+  },
+  "publisher": "enthony",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Terminal",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onView:agentTerminal.view"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "secondarySidebar": [
+        {
+          "id": "agentTerminalContainer",
+          "title": "Agent Terminal",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "agentTerminalContainer": [
+        {
+          "type": "webview",
+          "id": "agentTerminal.view",
+          "name": "Agent Terminal"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "agentTerminal.focus",
+        "title": "Agent Terminal: Focus",
+        "category": "Agent Terminal"
+      },
+      {
+        "command": "agentTerminal.newTerminal",
+        "title": "Agent Terminal: New Terminal",
+        "category": "Agent Terminal",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "agentTerminal.launchAgent",
+        "title": "Agent Terminal: Launch Agent",
+        "category": "Agent Terminal",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "agentTerminal.killTerminal",
+        "title": "Agent Terminal: Kill Terminal",
+        "category": "Agent Terminal",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "agentTerminal.launchAgent",
+          "when": "view == agentTerminal.view",
+          "group": "navigation@1"
+        },
+        {
+          "command": "agentTerminal.newTerminal",
+          "when": "view == agentTerminal.view",
+          "group": "navigation@2"
+        },
+        {
+          "command": "agentTerminal.killTerminal",
+          "when": "view == agentTerminal.view",
+          "group": "navigation@3"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "agentTerminal.focus",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t"
+      },
+      {
+        "command": "agentTerminal.newTerminal",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n",
+        "when": "agentTerminalFocus"
+      },
+      {
+        "command": "agentTerminal.launchAgent",
+        "key": "ctrl+alt+a",
+        "mac": "cmd+alt+a",
+        "when": "agentTerminalFocus"
+      },
+      {
+        "command": "agentTerminal.killTerminal",
+        "key": "ctrl+alt+w",
+        "mac": "cmd+alt+w",
+        "when": "agentTerminalFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Agent Terminal",
+      "properties": {
+        "agentTerminal.agents": {
+          "type": "array",
+          "default": [
+            {
+              "name": "Claude Code",
+              "command": "claude"
+            },
+            {
+              "name": "Codex CLI",
+              "command": "codex"
+            },
+            {
+              "name": "Gemini CLI",
+              "command": "gemini"
+            }
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Agent display name"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command or CLI executable to run"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ]
+          },
+          "description": "List of AI CLI agents configured for the agent launcher QuickPick."
+        },
+        "agentTerminal.copyOnSelect": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically copy selected text in terminal to clipboard."
+        },
+        "agentTerminal.ptyBackend": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "node-pty",
+            "python"
+          ],
+          "default": "auto",
+          "description": "PTY backend implementation: 'auto' (preferred node-pty with python fallback), 'node-pty', or 'python'."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "build": "node esbuild.js --production",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/pty.test.js",
+    "package": "npm run build && npx @vscode/vsce package"
+  },
+  "dependencies": {
+    "@homebridge/node-pty-prebuilt-multiarch": "^0.15.0-beta.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.97.0",
+    "@vscode/vsce": "^3.2.0",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-unicode11": "^0.9.0",
+    "@xterm/addon-web-links": "^0.12.0",
+    "@xterm/addon-webgl": "^0.19.0",
+    "@xterm/xterm": "^6.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3"
+  }
+}
