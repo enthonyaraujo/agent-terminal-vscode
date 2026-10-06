@@ -188,7 +188,7 @@
     "build": "node esbuild.js --production",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"test/*.test.js\"",
-    "package": "npm run build && npx @vscode/vsce package --no-rewrite-relative-links"
+    "package": "npm run build && npx @vscode/vsce package --githubBranch main"
   },
   "dependencies": {
     "@homebridge/node-pty-prebuilt-multiarch": "^0.15.0-beta.3"
