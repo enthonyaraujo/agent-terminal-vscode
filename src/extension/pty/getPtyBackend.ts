@@ -13,7 +13,7 @@ function showFallbackNotification(logger: Logger, reason: any): void {
   const reasonMsg = reason?.message || String(reason || 'Erro desconhecido');
   vscode.window
     .showWarningMessage(
-      `Agent Terminal: O módulo nativo node-pty falhou (${reasonMsg}). O fallback em Python 3 foi ativado.`,
+      `Agent CLI Terminal: O módulo nativo node-pty falhou (${reasonMsg}). O fallback em Python 3 foi ativado.`,
       'Abrir log'
     )
     .then((selection) => {
@@ -88,10 +88,10 @@ export class AutoPtyBackend implements IPtyBackend {
 }
 
 export function getPtyBackend(extensionUri: vscode.Uri, logger: Logger): IPtyBackend {
-  const config = vscode.workspace.getConfiguration('agentTerminal');
+  const config = vscode.workspace.getConfiguration('agentCliTerminal');
   const backendChoice = config.get<string>('ptyBackend', 'auto');
 
-  logger.info(`Configuração agentTerminal.ptyBackend: "${backendChoice}"`);
+  logger.info(`Configuração agentCliTerminal.ptyBackend: "${backendChoice}"`);
 
   if (backendChoice === 'python') {
     logger.info('Backend selecionado explicitamente: python-pty (pty_helper.py).');

@@ -191,7 +191,7 @@ function createTerminalInstance(session: SessionInfo): TerminalInstance {
     });
     term.loadAddon(webglAddon);
   } catch (err) {
-    console.warn('[AgentTerminal] WebGL addon unavailable, using standard DOM renderer:', err);
+    console.warn('[AgentCliTerminal] WebGL addon unavailable, using standard DOM renderer:', err);
   }
 
   // Handle keyboard shortcuts (Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+V)

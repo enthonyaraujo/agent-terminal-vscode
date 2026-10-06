@@ -1,4 +1,4 @@
-# Agent Terminal for Visual Studio Code
+# Agent CLI Terminal for Visual Studio Code
 
 Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na barra lateral secundária (Secondary Side Bar)**, projetado especificamente para executar agentes de IA via linha de comando (**Claude Code**, **Codex CLI**, **Gemini CLI**, **Antigravity CLI**, etc.) ocupando toda a altura da janela, sem interferir nem mover o terminal nativo do VS Code (aba inferior).
 
@@ -23,12 +23,12 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ## Principais Recursos
 
-- **Convivência sem conflitos:** O terminal inferior padrão do VS Code continua funcionando normalmente. O Agent Terminal fica na barra lateral direita.
+- **Convivência sem conflitos:** O terminal inferior padrão do VS Code continua funcionando normalmente. O Agent CLI Terminal fica na barra lateral direita.
 - **Shell 100% Interativo:** Abre o shell com a flag `-i` (modo interativo) e respeita seus arquivos de inicialização (`~/.bashrc`, `~/.zshrc`), exibindo o prompt completo com cores, caminho e estilo (ex.: `usuario@host:~/projeto$`).
 - **Resolução de CWD & Ambiente:** Inicializa automaticamente na pasta raiz do workspace aberto, respeita `terminal.integrated.defaultProfile`, variáveis de ambiente customizadas e suporte a truecolor (`COLORTERM=truecolor`).
 - **Renderização Rápida e Leve:** Baseado em **xterm.js v6** com aceleração via **WebGL** (e fallback automático para DOM/canvas). Zero frameworks pesados (HTML/CSS/TS puros).
 - **Sem Perda de Histórico:** O terminal utiliza `retainContextWhenHidden: true`, mantendo TUIs em execução (Claude Code, curses, Ink) ativas em segundo plano sem perda de estado e sem "flicker".
-- **Múltiplas Abas:** Alterne entre diferentes sessões de agentes, crie novas abas (`+`), feche abas (`x`) e renomeie qualquer aba com **duplo clique**.
+- **Múltiplas Abas com Numeração Inteligente:** Alterne entre diferentes sessões de agentes, crie novas abas (`+`), feche abas (`x`) e renomeie qualquer aba com **duplo clique**. Números de abas fechadas são reciclados automaticamente para a menor numeração livre.
 - **Seletor de Agentes Integrado:** Menu rápido (QuickPick) para disparar agentes pré-configurados ou comandos personalizados em uma nova aba ou na aba atual.
 - **Suporte Avançado a Teclado:**
   - `Ctrl+C`: Se houver seleção, copia o texto. Se não houver seleção, envia `SIGINT` (`^C`) diretamente para cancelar a ação do agente.
@@ -42,27 +42,27 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 ## Instalação
 
 ### Pelo VS Code Marketplace
-Pesquise por **Agent Terminal** (`enthonyaraujo.agent-terminal-vscode`) na aba de **Extensões** (`Ctrl+Shift+X`) e clique em **Instalar**.
+Pesquise por **Agent CLI Terminal** (`enthonyaraujo.agent-cli-terminal`) na aba de **Extensões** (`Ctrl+Shift+X`) e clique em **Instalar**.
 
 ### Via Linha de Comando (.vsix)
 ```bash
-code --install-extension agent-terminal-vscode-1.0.0.vsix
+code --install-extension agent-cli-terminal-1.0.0.vsix
 ```
 
 ### Pela Interface do VS Code (VSIX manual)
 1. Abra a aba de **Extensões** (`Ctrl+Shift+X`).
 2. Clique no menu de três pontos (`...`) no canto superior da lista de extensões.
-3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-vscode-1.0.0.vsix`.
+3. Selecione **Install from VSIX...** e escolha o arquivo `agent-cli-terminal-1.0.0.vsix`.
 
 ---
 
 ## Como Posicionar na Barra Lateral Secundária
 
-No VS Code moderno (1.106+), o **Agent Terminal** já nasce automaticamente na **Secondary Side Bar** à direita.
+No VS Code moderno (1.106+), o **Agent CLI Terminal** já nasce automaticamente na **Secondary Side Bar** à direita.
 
 Caso queira reposicionar:
 1. Pressione `Ctrl+Alt+B` (ou clique no ícone no canto superior direito do VS Code) para exibir a **Secondary Side Bar**.
-2. Clique no ícone do **Agent Terminal** e arraste-o para a barra lateral que preferir. O VS Code memoriza essa posição permanentemente.
+2. Clique no ícone do **Agent CLI Terminal** e arraste-o para a barra lateral que preferir. O VS Code memoriza essa posição permanentemente.
 
 ---
 
@@ -70,7 +70,7 @@ Caso queira reposicionar:
 
 | Ação | Atalho (Linux/Windows) | Atalho (macOS) |
 | :--- | :--- | :--- |
-| **Focar no Agent Terminal** | `Ctrl+Alt+T` | `Cmd+Alt+T` |
+| **Focar no Agent CLI Terminal** | `Ctrl+Alt+T` | `Cmd+Alt+T` |
 | **Novo Terminal / Nova Aba** | `Ctrl+Alt+N` | `Cmd+Alt+N` |
 | **Lançar Agente de IA** | `Ctrl+Alt+A` | `Cmd+Alt+A` |
 | **Encerrar Terminal / Fechar Aba** | `Ctrl+Alt+W` | `Cmd+Alt+W` |
@@ -82,12 +82,15 @@ Caso queira reposicionar:
 
 ## Configuração
 
+> [!NOTE]
+> As chaves de configuração e comandos utilizam o namespace **`agentCliTerminal.*`** (ex.: `agentCliTerminal.agents`, `agentCliTerminal.ptyBackend`, `agentCliTerminal.copyOnSelect`).
+
 Você pode personalizar os agentes e opções no seu `settings.json`:
 
 ```json
 {
   // Lista de agentes de IA disponíveis no QuickPick (Ctrl+Alt+A)
-  "agentTerminal.agents": [
+  "agentCliTerminal.agents": [
     { "name": "Claude Code", "command": "claude" },
     { "name": "Codex CLI", "command": "codex" },
     { "name": "Gemini CLI", "command": "gemini" },
@@ -95,14 +98,14 @@ Você pode personalizar os agentes e opções no seu `settings.json`:
   ],
 
   // Copiar automaticamente o texto selecionado
-  "agentTerminal.copyOnSelect": false,
+  "agentCliTerminal.copyOnSelect": false,
 
   // Backend de pseudoterminal: "auto" (recomendado), "node-pty", ou "python"
-  "agentTerminal.ptyBackend": "auto"
+  "agentCliTerminal.ptyBackend": "auto"
 }
 ```
 
-O Agent Terminal também herda automaticamente suas preferências de terminal do VS Code:
+O Agent CLI Terminal também herda automaticamente suas preferências de terminal do VS Code:
 - `terminal.integrated.fontFamily` (com fallback para `editor.fontFamily` e `, monospace`)
 - `terminal.integrated.fontSize`
 - `terminal.integrated.lineHeight`
@@ -123,18 +126,18 @@ A extensão oferece dois mecanismos de pseudoterminal para conciliar máxima per
 
 ### Como Forçar um Backend
 No arquivo `settings.json` do VS Code:
-- **`"agentTerminal.ptyBackend": "auto"` (Padrão):** No Linux/macOS, tenta carregar o `node-pty`. Se o `require()` falhar (por exemplo, após uma atualização do VS Code mudar o Electron) ou se a chamada de `spawn()` lançar exceção, a extensão ativa automaticamente o `python-pty`.
-- **`"agentTerminal.ptyBackend": "node-pty"`:** Força exclusivamente o backend nativo. Se falhar, lança erro no log.
-- **`"agentTerminal.ptyBackend": "python"`:** Força exclusivamente o helper Python 3, sem carregar módulos nativos C++.
+- **`"agentCliTerminal.ptyBackend": "auto"` (Padrão):** No Linux/macOS, tenta carregar o `node-pty`. Se o `require()` falhar (por exemplo, após uma atualização do VS Code mudar o Electron) ou se a chamada de `spawn()` lançar exceção, a extensão ativa automaticamente o `python-pty`.
+- **`"agentCliTerminal.ptyBackend": "node-pty"`:** Força exclusivamente o backend nativo. Se falhar, lança erro no log.
+- **`"agentCliTerminal.ptyBackend": "python"`:** Força exclusivamente o helper Python 3, sem carregar módulos nativos C++.
 
 ### Como Diagnosticar (Output Channel)
 Para verificar qual backend está em uso ou checar eventuais erros:
 1. Pressione `Ctrl+Shift+P` (ou `Cmd+Shift+P` no macOS) e execute o comando:
-   **`Agent Terminal: Show Output Log`**
-2. Ou abra a aba **Output** no painel inferior do VS Code e selecione **Agent Terminal** no menu suspenso à direita.
+   **`Agent CLI Terminal: Show Output Log`**
+2. Ou abra a aba **Output** no painel inferior do VS Code e selecione **Agent CLI Terminal** no menu suspenso à direita.
 3. No painel de log você verá registros como:
    ```text
-   [2026-10-06 18:40:00] [INFO] Configuração agentTerminal.ptyBackend: "auto"
+   [2026-10-06 18:40:00] [INFO] Configuração agentCliTerminal.ptyBackend: "auto"
    [2026-10-06 18:40:00] [INFO] Backend selecionado: node-pty (@homebridge/node-pty-prebuilt-multiarch)
    [2026-10-06 18:40:01] [INFO] Criando sessão: "Terminal 1" (cwd: /home/usuario/projeto, shell: /bin/bash)
    [2026-10-06 18:40:01] [INFO] Shell iniciado via node-pty (PID: 12345, cmd: /bin/bash)
@@ -149,10 +152,10 @@ Para verificar qual backend está em uso ou checar eventuais erros:
 Certifique-se de que a CLI do agente está instalada e disponível no seu `$PATH`. Se você instalou a ferramenta globalmente via npm, pip ou cargo em um diretório de usuário (ex.: `~/.local/bin` ou `~/.cargo/bin`), especifique o comando com caminho completo ou garanta que ele seja exportado no seu `~/.bashrc` / `~/.zshrc`.
 
 ### 2. O prompt do shell parece desconfigurado
-O Agent Terminal adiciona automaticamente a flag `-i` para forçar o bash/zsh a carregar scripts como Starship, Oh-My-Bash ou powerline. Caso tenha configurações condicionais no seu arquivo de inicialização, verifique se elas dependem da variável `TERM=xterm-256color`.
+O Agent CLI Terminal adiciona automaticamente a flag `-i` para forçar o bash/zsh a carregar scripts como Starship, Oh-My-Bash ou powerline. Caso tenha configurações condicionais no seu arquivo de inicialização, verifique se elas dependem da variável `TERM=xterm-256color`.
 
 ### 3. Falha ou Incompatibilidade no Módulo Nativo
-Se após atualizar o VS Code o terminal emitir a notificação de fallback, o backend Python assumirá o controle de forma transparente. Para investigar, abra o Output Channel via comando `Agent Terminal: Show Output Log` para inspecionar a causa raiz.
+Se após atualizar o VS Code o terminal emitir a notificação de fallback, o backend Python assumirá o controle de forma transparente. Para investigar, abra o Output Channel via comando `Agent CLI Terminal: Show Output Log` para inspecionar a causa raiz.
 
 ---
 

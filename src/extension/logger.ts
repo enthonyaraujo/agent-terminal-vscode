@@ -4,7 +4,7 @@ export class Logger implements vscode.Disposable {
   private channel: vscode.OutputChannel;
 
   constructor() {
-    this.channel = vscode.window.createOutputChannel('Agent Terminal');
+    this.channel = vscode.window.createOutputChannel('Agent CLI Terminal');
   }
 
   private timestamp(): string {

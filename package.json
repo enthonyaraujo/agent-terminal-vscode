@@ -1,6 +1,6 @@
 {
-  "name": "agent-terminal-vscode",
-  "displayName": "Agent Terminal",
+  "name": "agent-cli-terminal",
+  "displayName": "Agent CLI Terminal",
   "description": "Dedicated sidebar terminal for AI CLI agents (Claude, Codex, Gemini, etc.) running alongside VS Code's native terminal.",
   "version": "1.0.0",
   "publisher": "enthonyaraujo",
@@ -30,105 +30,105 @@
   ],
   "main": "./dist/extension.js",
   "activationEvents": [
-    "onView:agentTerminal.view"
+    "onView:agentCliTerminal.view"
   ],
   "contributes": {
     "viewsContainers": {
       "secondarySidebar": [
         {
-          "id": "agentTerminalContainer",
-          "title": "Agent Terminal",
+          "id": "agentCliTerminalContainer",
+          "title": "Agent CLI Terminal",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "agentTerminalContainer": [
+      "agentCliTerminalContainer": [
         {
           "type": "webview",
-          "id": "agentTerminal.view",
-          "name": "Agent Terminal"
+          "id": "agentCliTerminal.view",
+          "name": "Agent CLI Terminal"
         }
       ]
     },
     "commands": [
       {
-        "command": "agentTerminal.focus",
-        "title": "Agent Terminal: Focus",
-        "category": "Agent Terminal"
+        "command": "agentCliTerminal.focus",
+        "title": "Agent CLI Terminal: Focus",
+        "category": "Agent CLI Terminal"
       },
       {
-        "command": "agentTerminal.newTerminal",
-        "title": "Agent Terminal: New Terminal",
-        "category": "Agent Terminal",
+        "command": "agentCliTerminal.newTerminal",
+        "title": "Agent CLI Terminal: New Terminal",
+        "category": "Agent CLI Terminal",
         "icon": "$(plus)"
       },
       {
-        "command": "agentTerminal.launchAgent",
-        "title": "Agent Terminal: Launch Agent",
-        "category": "Agent Terminal",
+        "command": "agentCliTerminal.launchAgent",
+        "title": "Agent CLI Terminal: Launch Agent",
+        "category": "Agent CLI Terminal",
         "icon": "$(sparkle)"
       },
       {
-        "command": "agentTerminal.killTerminal",
-        "title": "Agent Terminal: Kill Terminal",
-        "category": "Agent Terminal",
+        "command": "agentCliTerminal.killTerminal",
+        "title": "Agent CLI Terminal: Kill Terminal",
+        "category": "Agent CLI Terminal",
         "icon": "$(trash)"
       },
       {
-        "command": "agentTerminal.showLog",
-        "title": "Agent Terminal: Show Output Log",
-        "category": "Agent Terminal"
+        "command": "agentCliTerminal.showLog",
+        "title": "Agent CLI Terminal: Show Output Log",
+        "category": "Agent CLI Terminal"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "agentTerminal.launchAgent",
-          "when": "view == agentTerminal.view",
+          "command": "agentCliTerminal.launchAgent",
+          "when": "view == agentCliTerminal.view",
           "group": "navigation@1"
         },
         {
-          "command": "agentTerminal.newTerminal",
-          "when": "view == agentTerminal.view",
+          "command": "agentCliTerminal.newTerminal",
+          "when": "view == agentCliTerminal.view",
           "group": "navigation@2"
         },
         {
-          "command": "agentTerminal.killTerminal",
-          "when": "view == agentTerminal.view",
+          "command": "agentCliTerminal.killTerminal",
+          "when": "view == agentCliTerminal.view",
           "group": "navigation@3"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "agentTerminal.focus",
+        "command": "agentCliTerminal.focus",
         "key": "ctrl+alt+t",
         "mac": "cmd+alt+t"
       },
       {
-        "command": "agentTerminal.newTerminal",
+        "command": "agentCliTerminal.newTerminal",
         "key": "ctrl+alt+n",
         "mac": "cmd+alt+n",
-        "when": "agentTerminalFocus"
+        "when": "agentCliTerminalFocus"
       },
       {
-        "command": "agentTerminal.launchAgent",
+        "command": "agentCliTerminal.launchAgent",
         "key": "ctrl+alt+a",
         "mac": "cmd+alt+a",
-        "when": "agentTerminalFocus"
+        "when": "agentCliTerminalFocus"
       },
       {
-        "command": "agentTerminal.killTerminal",
+        "command": "agentCliTerminal.killTerminal",
         "key": "ctrl+alt+w",
         "mac": "cmd+alt+w",
-        "when": "agentTerminalFocus"
+        "when": "agentCliTerminalFocus"
       }
     ],
     "configuration": {
-      "title": "Agent Terminal",
+      "title": "Agent CLI Terminal",
       "properties": {
-        "agentTerminal.agents": {
+        "agentCliTerminal.agents": {
           "type": "array",
           "default": [
             {
@@ -163,12 +163,12 @@
           },
           "description": "List of AI CLI agents configured for the agent launcher QuickPick."
         },
-        "agentTerminal.copyOnSelect": {
+        "agentCliTerminal.copyOnSelect": {
           "type": "boolean",
           "default": false,
           "description": "Automatically copy selected text in terminal to clipboard."
         },
-        "agentTerminal.ptyBackend": {
+        "agentCliTerminal.ptyBackend": {
           "type": "string",
           "enum": [
             "auto",

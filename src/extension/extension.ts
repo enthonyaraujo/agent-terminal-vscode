@@ -31,21 +31,21 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: Show Log
   context.subscriptions.push(
-    vscode.commands.registerCommand('agentTerminal.showLog', () => {
+    vscode.commands.registerCommand('agentCliTerminal.showLog', () => {
       logger?.show();
     })
   );
 
   // Command: Focus Terminal
   context.subscriptions.push(
-    vscode.commands.registerCommand('agentTerminal.focus', () => {
+    vscode.commands.registerCommand('agentCliTerminal.focus', () => {
       viewProvider.focus();
     })
   );
 
   // Command: New Terminal
   context.subscriptions.push(
-    vscode.commands.registerCommand('agentTerminal.newTerminal', () => {
+    vscode.commands.registerCommand('agentCliTerminal.newTerminal', () => {
       sessionManager?.createSession();
       viewProvider.focus();
     })
@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: Kill Terminal
   context.subscriptions.push(
-    vscode.commands.registerCommand('agentTerminal.killTerminal', () => {
+    vscode.commands.registerCommand('agentCliTerminal.killTerminal', () => {
       const activeId = sessionManager?.activeSessionId;
       if (sessionManager && activeId) {
         sessionManager.closeSession(activeId);
@@ -63,8 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: Launch Agent
   context.subscriptions.push(
-    vscode.commands.registerCommand('agentTerminal.launchAgent', async () => {
-      const config = vscode.workspace.getConfiguration('agentTerminal');
+    vscode.commands.registerCommand('agentCliTerminal.launchAgent', async () => {
+      const config = vscode.workspace.getConfiguration('agentCliTerminal');
       const agents = config.get<Array<{ name: string; command: string }>>('agents') || [
         { name: 'Claude Code', command: 'claude' },
         { name: 'Codex CLI', command: 'codex' },
@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
 
       const selected = await vscode.window.showQuickPick(items, {
-        placeHolder: 'Select an AI Agent or CLI command to launch in Agent Terminal',
+        placeHolder: 'Select an AI Agent or CLI command to launch in Agent CLI Terminal',
         title: 'Launch Agent',
       });
 

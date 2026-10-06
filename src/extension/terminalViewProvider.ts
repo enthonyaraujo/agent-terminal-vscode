@@ -8,7 +8,7 @@ import {
 } from '../common/protocol';
 
 export class TerminalViewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'agentTerminal.view';
+  public static readonly viewType = 'agentCliTerminal.view';
   private webviewView?: vscode.WebviewView;
 
   constructor(
@@ -43,9 +43,9 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.onDidChangeVisibility(() => {
       if (webviewView.visible) {
-        vscode.commands.executeCommand('setContext', 'agentTerminalFocus', true);
+        vscode.commands.executeCommand('setContext', 'agentCliTerminalFocus', true);
       } else {
-        vscode.commands.executeCommand('setContext', 'agentTerminalFocus', false);
+        vscode.commands.executeCommand('setContext', 'agentCliTerminalFocus', false);
       }
     });
   }
@@ -63,7 +63,7 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
   private getTerminalConfig(): TerminalConfig {
     const terminalConfig = vscode.workspace.getConfiguration('terminal.integrated');
     const editorConfig = vscode.workspace.getConfiguration('editor');
-    const agentConfig = vscode.workspace.getConfiguration('agentTerminal');
+    const agentConfig = vscode.workspace.getConfiguration('agentCliTerminal');
 
     // 1. Resolução de fontFamily: terminal.integrated -> editor -> monospace
     let rawFontFamily = terminalConfig.get<string>('fontFamily')?.trim() || '';
@@ -176,7 +176,7 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
       }
 
       case 'launchAgent': {
-        vscode.commands.executeCommand('agentTerminal.launchAgent');
+        vscode.commands.executeCommand('agentCliTerminal.launchAgent');
         break;
       }
 
@@ -184,7 +184,7 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
         try {
           vscode.env.openExternal(vscode.Uri.parse(message.url));
         } catch (err) {
-          console.error('[AgentTerminal] Failed to open external URL:', err);
+          console.error('[AgentCliTerminal] Failed to open external URL:', err);
         }
         break;
       }
@@ -229,7 +229,7 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
         e.affectsConfiguration('editor.fontFamily') ||
         e.affectsConfiguration('editor.fontSize') ||
         e.affectsConfiguration('editor.lineHeight') ||
-        e.affectsConfiguration('agentTerminal')
+        e.affectsConfiguration('agentCliTerminal')
       ) {
         const config = this.getTerminalConfig();
         this.postMessage({ type: 'updateConfig', config });
@@ -254,7 +254,7 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; font-src ${webview.cspSource};">
   <link rel="stylesheet" href="${styleUri}">
-  <title>Agent Terminal</title>
+  <title>Agent CLI Terminal</title>
 </head>
 <body>
   <div id="app">

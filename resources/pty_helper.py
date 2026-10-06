@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Python PTY Helper for Agent Terminal VS Code Extension.
+Python PTY Helper for Agent CLI Terminal VS Code Extension.
 Acts as a fallback pseudoterminal backend using Python standard library.
 Communicates with Node.js via stdin/stdout framing protocol:
 [1 byte TYPE] [4 bytes LENGTH (big-endian)] [PAYLOAD]

@@ -4,7 +4,7 @@ const pty = require('@homebridge/node-pty-prebuilt-multiarch');
 const child_process = require('child_process');
 const path = require('path');
 
-describe('Agent Terminal PTY Backend Tests', () => {
+describe('Agent CLI Terminal PTY Backend Tests', () => {
   it('should spawn interactive bash with node-pty and show prompt with correct cwd', () => {
     return new Promise((resolve) => {
       const cwd = process.cwd();
