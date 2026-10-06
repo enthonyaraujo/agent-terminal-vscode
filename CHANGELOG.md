@@ -4,6 +4,17 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) e este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.0.0] - 2026-10-06
+
+### Lançamento Oficial (Produção)
+- **Primeira Versão Estável para o VS Code Marketplace:** Suporte completo e oficial para terminal de agentes de IA na barra lateral secundária (`Secondary Side Bar`).
+- **Resolução Automática de Ativos no Marketplace:** URLs de imagens ajustadas com `--githubBranch main` para renderização perfeita tanto no GitHub quanto na vitrine do marketplace.
+- **Backend Duplo Resiliente:** Aceleração nativa com `@homebridge/node-pty-prebuilt-multiarch` e fallback transparente com `pty_helper.py` em Python 3.
+- **Shell Interativo com Herança de CWD:** Carregamento automático de dotfiles (`.bashrc`, `.zshrc`), suporte a cores truecolor e resolução na raiz do workspace.
+- **Gerenciamento Inteligente de Abas:** Reutilização automática do menor índice positivo livre ("Terminal N"), suporte a múltiplas sessões, renomeação com duplo clique e isolamento de nomes customizados/agentes.
+- **Integração de Agentes de IA:** QuickPick (`Ctrl+Alt+A` / `Cmd+Alt+A`) para disparar ferramentas como Claude Code, Codex CLI, Gemini CLI e comandos customizados.
+- **Terminal WebGL Otimizado:** xterm.js v6 com suporte a aceleração gráfica por hardware, links clicáveis e sincronização precisa de fontes monoespaçadas.
+
 ## [0.1.2] - 2026-10-06
 
 ### Corrigido

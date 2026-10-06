@@ -41,15 +41,18 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ## Instalação
 
+### Pelo VS Code Marketplace
+Pesquise por **Agent Terminal** (`enthonyaraujo.agent-terminal`) na aba de **Extensões** (`Ctrl+Shift+X`) e clique em **Instalar**.
+
 ### Via Linha de Comando (.vsix)
 ```bash
-code --install-extension agent-terminal-0.1.2.vsix
+code --install-extension agent-terminal-1.0.0.vsix
 ```
 
-### Pela Interface do VS Code
+### Pela Interface do VS Code (VSIX manual)
 1. Abra a aba de **Extensões** (`Ctrl+Shift+X`).
 2. Clique no menu de três pontos (`...`) no canto superior da lista de extensões.
-3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-0.1.2.vsix`.
+3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-1.0.0.vsix`.
 
 ---
 
