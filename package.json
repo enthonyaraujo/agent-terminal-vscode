@@ -2,7 +2,7 @@
   "name": "agent-terminal",
   "displayName": "Agent Terminal",
   "description": "Dedicated sidebar terminal for AI CLI agents (Claude, Codex, Gemini, etc.) running alongside VS Code's native terminal.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "repository": {
     "type": "git",

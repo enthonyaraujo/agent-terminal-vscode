@@ -61,16 +61,51 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
   }
 
   private getTerminalConfig(): TerminalConfig {
-    const config = vscode.workspace.getConfiguration('terminal.integrated');
+    const terminalConfig = vscode.workspace.getConfiguration('terminal.integrated');
+    const editorConfig = vscode.workspace.getConfiguration('editor');
     const agentConfig = vscode.workspace.getConfiguration('agentTerminal');
+
+    // 1. Resolução de fontFamily: terminal.integrated -> editor -> monospace
+    let rawFontFamily = terminalConfig.get<string>('fontFamily')?.trim() || '';
+    if (!rawFontFamily) {
+      rawFontFamily = editorConfig.get<string>('fontFamily')?.trim() || '';
+    }
+    if (!rawFontFamily) {
+      rawFontFamily = 'monospace';
+    }
+
+    // Sempre acrescentar ", monospace" ao final da cadeia para fallback monoespaçado
+    let fontFamily = rawFontFamily;
+    if (!fontFamily.toLowerCase().endsWith('monospace')) {
+      fontFamily = `${fontFamily}, monospace`;
+    }
+
+    // 2. Resolução de fontSize: terminal.integrated -> editor -> 14
+    const terminalFontSize = terminalConfig.get<number>('fontSize');
+    const editorFontSize = editorConfig.get<number>('fontSize') || 14;
+    const fontSize = (terminalFontSize && terminalFontSize > 0) ? terminalFontSize : editorFontSize;
+
+    // 3. Demais propriedades tipográficas e do cursor
+    const lineHeight = terminalConfig.get<number>('lineHeight') || 1;
+    const letterSpacing = terminalConfig.get<number>('letterSpacing') || 0;
+    const fontWeight = (terminalConfig.get<string>('fontWeight') || 'normal') as any;
+    const fontWeightBold = (terminalConfig.get<string>('fontWeightBold') || 'bold') as any;
+    const cursorStyle = (terminalConfig.get<string>('cursorStyle') || 'block') as any;
+    const cursorBlink = terminalConfig.get<boolean>('cursorBlink') ?? true;
+    const scrollback = terminalConfig.get<number>('scrollback') || 5000;
+    const copyOnSelect = agentConfig.get<boolean>('copyOnSelect') ?? false;
+
     return {
-      fontFamily: config.get<string>('fontFamily') || '',
-      fontSize: config.get<number>('fontSize') || 14,
-      lineHeight: config.get<number>('lineHeight') || 1,
-      cursorStyle: (config.get<string>('cursorStyle') || 'block') as any,
-      cursorBlink: config.get<boolean>('cursorBlink') ?? true,
-      scrollback: config.get<number>('scrollback') || 5000,
-      copyOnSelect: agentConfig.get<boolean>('copyOnSelect') ?? false,
+      fontFamily,
+      fontSize,
+      lineHeight,
+      letterSpacing,
+      fontWeight,
+      fontWeightBold,
+      cursorStyle,
+      cursorBlink,
+      scrollback,
+      copyOnSelect,
     };
   }
 
@@ -189,7 +224,13 @@ export class TerminalViewProvider implements vscode.WebviewViewProvider {
 
   private registerConfigListener(): void {
     vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration('terminal.integrated') || e.affectsConfiguration('agentTerminal')) {
+      if (
+        e.affectsConfiguration('terminal.integrated') ||
+        e.affectsConfiguration('editor.fontFamily') ||
+        e.affectsConfiguration('editor.fontSize') ||
+        e.affectsConfiguration('editor.lineHeight') ||
+        e.affectsConfiguration('agentTerminal')
+      ) {
         const config = this.getTerminalConfig();
         this.postMessage({ type: 'updateConfig', config });
       }

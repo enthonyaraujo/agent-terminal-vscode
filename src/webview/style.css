@@ -141,6 +141,8 @@ html, body {
   height: calc(100% - 32px);
   overflow: hidden;
   background-color: var(--vscode-terminal-background, #1e1e1e);
+  font-family: var(--vscode-terminal-font-family, var(--vscode-editor-font-family, monospace));
+  font-weight: normal;
 }
 
 .terminal-pane {
@@ -150,6 +152,8 @@ html, body {
   height: 100%;
   display: none;
   flex-direction: column;
+  font-family: var(--vscode-terminal-font-family, var(--vscode-editor-font-family, monospace));
+  font-weight: normal;
 }
 
 .terminal-pane.active {
@@ -162,10 +166,16 @@ html, body {
   height: 100%;
   padding: 4px 0 0 6px;
   overflow: hidden;
+  font-family: var(--vscode-terminal-font-family, var(--vscode-editor-font-family, monospace));
+  font-weight: normal;
 }
 
-.xterm {
+.xterm,
+.xterm-rows,
+.xterm-screen {
   height: 100%;
+  font-family: var(--vscode-terminal-font-family, var(--vscode-editor-font-family, monospace));
+  font-weight: normal;
 }
 
 .exit-banner {

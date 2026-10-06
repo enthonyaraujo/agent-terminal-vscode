@@ -22,6 +22,7 @@ interface TerminalInstance {
   session: SessionInfo;
   term: Terminal;
   fitAddon: FitAddon;
+  webglAddon?: WebglAddon;
   container: HTMLElement;
   viewport: HTMLElement;
   banner?: HTMLElement;
@@ -30,10 +31,14 @@ interface TerminalInstance {
 
 const instances = new Map<string, TerminalInstance>();
 let activeSessionId: string | undefined;
+
 let currentConfig: TerminalConfig = {
-  fontFamily: '',
+  fontFamily: 'monospace',
   fontSize: 14,
   lineHeight: 1,
+  letterSpacing: 0,
+  fontWeight: 'normal',
+  fontWeightBold: 'bold',
   cursorStyle: 'block',
   cursorBlink: true,
   scrollback: 5000,
@@ -85,10 +90,43 @@ function getThemeFromCss(): ITheme {
   };
 }
 
+function refitInstance(instance: TerminalInstance): void {
+  if (!instance.container.classList.contains('active')) return;
+
+  // Aguarda confirmação das fontes para medição exata da largura de caractere
+  document.fonts.ready.then(() => {
+    try {
+      instance.fitAddon.fit();
+      instance.webglAddon?.clearTextureAtlas();
+      vscode.postMessage({
+        type: 'resize',
+        sessionId: instance.session.id,
+        cols: instance.term.cols,
+        rows: instance.term.rows,
+      });
+    } catch {}
+
+    // Reforço no frame seguinte caso o DOM ainda estivesse calculando layout
+    requestAnimationFrame(() => {
+      try {
+        instance.fitAddon.fit();
+        instance.webglAddon?.clearTextureAtlas();
+      } catch {}
+    });
+  });
+}
+
 function updateAllThemes(): void {
   const theme = getThemeFromCss();
   for (const instance of instances.values()) {
     instance.term.options.theme = theme;
+    instance.webglAddon?.clearTextureAtlas();
+  }
+  if (activeSessionId) {
+    const active = instances.get(activeSessionId);
+    if (active) {
+      refitInstance(active);
+    }
   }
 }
 
@@ -116,9 +154,12 @@ function createTerminalInstance(session: SessionInfo): TerminalInstance {
   terminalsContainer.appendChild(container);
 
   const term = new Terminal({
-    fontFamily: currentConfig.fontFamily || undefined,
+    fontFamily: currentConfig.fontFamily || 'monospace',
     fontSize: currentConfig.fontSize,
     lineHeight: currentConfig.lineHeight,
+    letterSpacing: currentConfig.letterSpacing,
+    fontWeight: currentConfig.fontWeight,
+    fontWeightBold: currentConfig.fontWeightBold,
     cursorStyle: mapCursorStyle(currentConfig.cursorStyle),
     cursorBlink: currentConfig.cursorBlink,
     scrollback: currentConfig.scrollback,
@@ -140,15 +181,17 @@ function createTerminalInstance(session: SessionInfo): TerminalInstance {
 
   term.open(viewport);
 
-  // Try WebGL addon for smooth rendering, fallback to canvas/DOM
+  let webglAddon: WebglAddon | undefined;
+  // Tentar WebglAddon para renderização acelerada, fallback para DOM se falhar
   try {
-    const webglAddon = new WebglAddon();
+    webglAddon = new WebglAddon();
     webglAddon.onContextLoss(() => {
-      webglAddon.dispose();
+      webglAddon?.dispose();
+      webglAddon = undefined;
     });
     term.loadAddon(webglAddon);
   } catch (err) {
-    console.warn('[AgentTerminal] WebGL addon unavailable, using standard renderer:', err);
+    console.warn('[AgentTerminal] WebGL addon unavailable, using standard DOM renderer:', err);
   }
 
   // Handle keyboard shortcuts (Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+V)
@@ -215,30 +258,24 @@ function createTerminalInstance(session: SessionInfo): TerminalInstance {
     vscode.postMessage({ type: 'input', sessionId: session.id, data });
   });
 
-  // Resize observer
-  const ro = new ResizeObserver(() => {
-    if (activeSessionId === session.id && container.classList.contains('active')) {
-      try {
-        fitAddon.fit();
-        vscode.postMessage({
-          type: 'resize',
-          sessionId: session.id,
-          cols: term.cols,
-          rows: term.rows,
-        });
-      } catch {}
-    }
-  });
-  ro.observe(viewport);
-
   const instance: TerminalInstance = {
     session,
     term,
     fitAddon,
+    webglAddon,
     container,
     viewport,
-    resizeObserver: ro,
+    resizeObserver: null as any,
   };
+
+  // Resize observer
+  const ro = new ResizeObserver(() => {
+    if (activeSessionId === session.id && container.classList.contains('active')) {
+      refitInstance(instance);
+    }
+  });
+  ro.observe(viewport);
+  instance.resizeObserver = ro;
 
   instances.set(session.id, instance);
   return instance;
@@ -295,7 +332,7 @@ function renderTabs(): void {
     closeBtn.title = 'Close Terminal';
     closeBtn.innerHTML = `
       <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor">
-        <path d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.647-3.646-.707-.708L8 7.293 4.354 3.646l-.708.708L7.293 8l-3.647 3.646.708.708L8 8.707z"/>
+        <path d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.646-3.646-.708-.708L8 7.293 4.354 3.646l-.708.708L7.293 8l-3.647 3.646.708.708L8 8.707z"/>
       </svg>
     `;
 
@@ -324,18 +361,8 @@ function setActiveSession(sessionId: string): void {
   for (const [id, instance] of instances.entries()) {
     if (id === sessionId) {
       instance.container.classList.add('active');
-      requestAnimationFrame(() => {
-        try {
-          instance.fitAddon.fit();
-          instance.term.focus();
-          vscode.postMessage({
-            type: 'resize',
-            sessionId: id,
-            cols: instance.term.cols,
-            rows: instance.term.rows,
-          });
-        } catch {}
-      });
+      refitInstance(instance);
+      instance.term.focus();
     } else {
       instance.container.classList.remove('active');
     }
@@ -385,16 +412,19 @@ window.addEventListener('message', (event) => {
         createTerminalInstance(session);
       }
 
-      if (msg.activeSessionId) {
-        setActiveSession(msg.activeSessionId);
-      } else if (msg.sessions.length > 0) {
-        setActiveSession(msg.sessions[0].id);
-      }
+      // Aguarda o carregamento das fontes antes de posicionar e ajustar a primeira aba
+      document.fonts.ready.then(() => {
+        if (msg.activeSessionId) {
+          setActiveSession(msg.activeSessionId);
+        } else if (msg.sessions.length > 0) {
+          setActiveSession(msg.sessions[0].id);
+        }
+      });
       break;
     }
 
     case 'sessionCreated': {
-      const instance = createTerminalInstance(msg.session);
+      createTerminalInstance(msg.session);
       if (msg.activate || instances.size === 1) {
         setActiveSession(msg.session.id);
       } else {
@@ -407,6 +437,7 @@ window.addEventListener('message', (event) => {
       const instance = instances.get(msg.sessionId);
       if (instance) {
         instance.resizeObserver.disconnect();
+        instance.webglAddon?.dispose();
         instance.term.dispose();
         instance.container.remove();
         instances.delete(msg.sessionId);
@@ -458,15 +489,25 @@ window.addEventListener('message', (event) => {
 
     case 'updateConfig': {
       Object.assign(currentConfig, msg.config);
+
       for (const instance of instances.values()) {
         if (msg.config.fontFamily !== undefined) {
-          instance.term.options.fontFamily = msg.config.fontFamily || undefined;
+          instance.term.options.fontFamily = msg.config.fontFamily || 'monospace';
         }
         if (msg.config.fontSize !== undefined) {
           instance.term.options.fontSize = msg.config.fontSize;
         }
         if (msg.config.lineHeight !== undefined) {
           instance.term.options.lineHeight = msg.config.lineHeight;
+        }
+        if (msg.config.letterSpacing !== undefined) {
+          instance.term.options.letterSpacing = msg.config.letterSpacing;
+        }
+        if (msg.config.fontWeight !== undefined) {
+          instance.term.options.fontWeight = msg.config.fontWeight;
+        }
+        if (msg.config.fontWeightBold !== undefined) {
+          instance.term.options.fontWeightBold = msg.config.fontWeightBold;
         }
         if (msg.config.cursorStyle !== undefined) {
           instance.term.options.cursorStyle = mapCursorStyle(msg.config.cursorStyle);
@@ -477,8 +518,18 @@ window.addEventListener('message', (event) => {
         if (msg.config.scrollback !== undefined) {
           instance.term.options.scrollback = msg.config.scrollback;
         }
-        instance.fitAddon.fit();
+        instance.webglAddon?.clearTextureAtlas();
       }
+
+      // Reajusta com medição da nova fonte
+      document.fonts.ready.then(() => {
+        if (activeSessionId) {
+          const active = instances.get(activeSessionId);
+          if (active) {
+            refitInstance(active);
+          }
+        }
+      });
       break;
     }
   }
