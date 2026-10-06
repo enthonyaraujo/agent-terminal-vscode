@@ -4,6 +4,18 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) e este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.1.2] - 2026-10-06
+
+### Corrigido
+- **Numeração Inteligente de Abas:** O nome padrão de novas sessões agora utiliza o menor inteiro positivo disponível ("Terminal N") baseado nas sessões ativas no momento, reutilizando números de abas fechadas (ex.: se o Terminal 1 for fechado mantendo o Terminal 2 aberto, o próximo será "Terminal 1").
+- **Eliminação de Contador Incremental:** O cálculo é feito dinamicamente a partir das sessões ativas, sem persistir contador.
+- **Isolamento de Nomes Manuais e Agentes:** Sessões renomeadas manualmente ou abertas via "Launch Agent" (ex.: "Claude Code") não ocupam números na sequência padrão.
+- **Consistência em Todos os Fluxos:** Aplicado de forma unificada no botão `+`, atalho/comando `agentTerminal.newTerminal`, sessão inicial e "Launch Agent".
+
+### Adicionado
+- **Testes Unitários:** Suíte de testes automatizados para a função `getNextDefaultSessionName`.
+- **Screenshot Oficial do Layout:** Atualização da documentação no README e no pacote da extensão com screenshot real da interface.
+
 ## [0.1.1] - 2026-10-06
 
 ### Adicionado

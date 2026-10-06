@@ -6,19 +6,7 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ## Demonstração do Layout
 
-<!-- Espaço reservado para a screenshot do layout -->
-```
-+-------------------+-----------------------------+-----------------------+
-|  Explorer         |  Editor Principal           |  Agent Terminal       |
-|  - src/           |                             |  [ Terminal 1 ] [+]   |
-|  - package.json   |  export function main() {   |                       |
-|                   |    console.log("hello");    |  usuario@host:~/dir$  |
-|                   |  }                          |  claude               |
-|                   |                             |  > Analyzing code...  |
-+-------------------+-----------------------------+-----------------------+
-|  TERMINAL NATIVO: usuario@host:~/dir$ npm test                          |
-+-------------------------------------------------------------------------+
-```
+![Demonstração do Layout](resources/screenshot.png)
 
 > **Visualização:** O terminal nativo do VS Code continua embaixo para comandos habituais (build, testes, git), enquanto a barra lateral direita hospeda a TUI do seu agente de IA com altura total.
 
@@ -55,13 +43,13 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ### Via Linha de Comando (.vsix)
 ```bash
-code --install-extension agent-terminal-0.1.1.vsix
+code --install-extension agent-terminal-0.1.2.vsix
 ```
 
 ### Pela Interface do VS Code
 1. Abra a aba de **Extensões** (`Ctrl+Shift+X`).
 2. Clique no menu de três pontos (`...`) no canto superior da lista de extensões.
-3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-0.1.1.vsix`.
+3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-0.1.2.vsix`.
 
 ---
 

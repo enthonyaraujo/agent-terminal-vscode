@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { IPtyBackend, IPtyProcess } from './pty/ptyBackend';
 import { resolveShellConfig } from './shellResolver';
 import { SessionInfo } from '../common/protocol';
+import { getNextDefaultSessionName } from '../common/sessionNaming';
 
 export interface TerminalSession {
   id: string;
@@ -18,7 +19,6 @@ export interface TerminalSession {
 export class SessionManager implements vscode.Disposable {
   private sessions = new Map<string, TerminalSession>();
   private activeId: string | undefined;
-  private sessionCounter = 0;
 
   private onDidCreateSessionEmitter = new vscode.EventEmitter<{ session: SessionInfo; activate: boolean }>();
   readonly onDidCreateSession = this.onDidCreateSessionEmitter.event;
@@ -71,9 +71,9 @@ export class SessionManager implements vscode.Disposable {
     rows?: number;
     activate?: boolean;
   }): TerminalSession {
-    this.sessionCounter += 1;
-    const id = `terminal-${Date.now()}-${this.sessionCounter}`;
-    const name = options?.name || `Terminal ${this.sessionCounter}`;
+    const id = `terminal-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const existingNames = Array.from(this.sessions.values()).map((s) => s.name);
+    const name = options?.name?.trim() || getNextDefaultSessionName(existingNames);
 
     const shellConfig = resolveShellConfig(options?.cwd);
     const cols = options?.cols || 80;
