@@ -38,7 +38,7 @@ export class SessionManager implements vscode.Disposable {
   private onSessionExitEmitter = new vscode.EventEmitter<{ id: string; exitCode: number }>();
   readonly onSessionExit = this.onSessionExitEmitter.event;
 
-  constructor(private ptyBackend: IPtyBackend) {}
+  constructor(private ptyBackend: IPtyBackend, private logger?: import('./logger').Logger) {}
 
   get activeSessionId(): string | undefined {
     return this.activeId;
@@ -79,6 +79,8 @@ export class SessionManager implements vscode.Disposable {
     const cols = options?.cols || 80;
     const rows = options?.rows || 24;
 
+    this.logger?.info(`Criando sessão: "${name}" (cwd: ${shellConfig.cwd}, shell: ${shellConfig.shell})`);
+
     const ptyProcess = this.ptyBackend.spawn(shellConfig.shell, shellConfig.args, {
       cols,
       rows,
@@ -114,6 +116,7 @@ export class SessionManager implements vscode.Disposable {
       ptyProcess.onExit((e: { exitCode: number }) => {
         session.isAlive = false;
         session.exitCode = e.exitCode;
+        this.logger?.info(`Sessão "${session.name}" encerrada com código de saída ${e.exitCode}`);
         this.onSessionExitEmitter.fire({ id, exitCode: e.exitCode });
       })
     );

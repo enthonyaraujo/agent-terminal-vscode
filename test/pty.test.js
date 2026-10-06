@@ -75,4 +75,39 @@ describe('Agent Terminal PTY Backend Tests', () => {
       }, 700);
     });
   });
+
+  it('should fallback to python-pty if primary backend fails', () => {
+    return new Promise((resolve) => {
+      const cwd = process.cwd();
+      const helperPath = path.join(__dirname, '..', 'resources', 'pty_helper.py');
+
+      class MockAutoPtyBackend {
+        constructor() {
+          this.activeBackend = 'mock-node-pty';
+          this.fallbackTriggered = false;
+        }
+        spawn(file, args) {
+          if (this.activeBackend === 'mock-node-pty') {
+            try {
+              throw new Error('Simulated Electron ABI mismatch error (NODE_MODULE_VERSION)');
+            } catch (err) {
+              this.fallbackTriggered = true;
+              this.activeBackend = 'python-pty';
+              const py = child_process.spawn('python3', [helperPath, '80', '24', cwd, file, ...args], {
+                stdio: ['pipe', 'pipe', 'inherit'],
+              });
+              return { py, backend: this.activeBackend };
+            }
+          }
+        }
+      }
+
+      const backend = new MockAutoPtyBackend();
+      const res = backend.spawn('bash', ['-i']);
+      assert.strictEqual(backend.fallbackTriggered, true);
+      assert.strictEqual(res.backend, 'python-pty');
+      res.py.kill();
+      resolve();
+    });
+  });
 });

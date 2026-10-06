@@ -62,6 +62,11 @@
         "title": "Agent Terminal: Kill Terminal",
         "category": "Agent Terminal",
         "icon": "$(trash)"
+      },
+      {
+        "command": "agentTerminal.showLog",
+        "title": "Agent Terminal: Show Output Log",
+        "category": "Agent Terminal"
       }
     ],
     "menus": {
@@ -159,7 +164,7 @@
             "python"
           ],
           "default": "auto",
-          "description": "PTY backend implementation: 'auto' (preferred node-pty with python fallback), 'node-pty', or 'python'."
+          "description": "Pseudoterminal backend: 'auto' (tries node-pty first with automatic fallback to Python 3 on Linux/macOS), 'node-pty' (force native module), or 'python' (force Python 3 helper)."
         }
       }
     }

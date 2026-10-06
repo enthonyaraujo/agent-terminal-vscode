@@ -94,6 +94,35 @@ O Agent Terminal também herda automaticamente suas preferências de terminal do
 
 ---
 
+## Gerenciamento de Backends e Diagnóstico
+
+### Backends Disponíveis
+A extensão oferece dois mecanismos de pseudoterminal para conciliar máxima performance e compatibilidade:
+1. **`node-pty` (Nativo):** Utiliza `@homebridge/node-pty-prebuilt-multiarch` baseado em N-API. Executa no mesmo processo do Extension Host, com latência zero e uso mínimo de memória.
+2. **`python-pty` (Fallback):** Utiliza um script auxiliar em Python 3 (`resources/pty_helper.py`) apoiado na biblioteca padrão (`pty.openpty()`, `termios`, `fcntl` com `TIOCSWINSZ`). Não requer compilação e independe de qualquer versão de ABI do Electron.
+
+### Como Forçar um Backend
+No arquivo `settings.json` do VS Code:
+- **`"agentTerminal.ptyBackend": "auto"` (Padrão):** No Linux/macOS, tenta carregar o `node-pty`. Se o `require()` falhar (por exemplo, após uma atualização do VS Code mudar o Electron) ou se a chamada de `spawn()` lançar exceção, a extensão ativa automaticamente o `python-pty`.
+- **`"agentTerminal.ptyBackend": "node-pty"`:** Força exclusivamente o backend nativo. Se falhar, lança erro no log.
+- **`"agentTerminal.ptyBackend": "python"`:** Força exclusivamente o helper Python 3, sem carregar módulos nativos C++.
+
+### Como Diagnosticar (Output Channel)
+Para verificar qual backend está em uso ou checar eventuais erros:
+1. Pressione `Ctrl+Shift+P` (ou `Cmd+Shift+P` no macOS) e execute o comando:
+   **`Agent Terminal: Show Output Log`**
+2. Ou abra a aba **Output** no painel inferior do VS Code e selecione **Agent Terminal** no menu suspenso à direita.
+3. No painel de log você verá registros como:
+   ```text
+   [2026-10-06 18:40:00] [INFO] Configuração agentTerminal.ptyBackend: "auto"
+   [2026-10-06 18:40:00] [INFO] Backend selecionado: node-pty (@homebridge/node-pty-prebuilt-multiarch)
+   [2026-10-06 18:40:01] [INFO] Criando sessão: "Terminal 1" (cwd: /home/usuario/projeto, shell: /bin/bash)
+   [2026-10-06 18:40:01] [INFO] Shell iniciado via node-pty (PID: 12345, cmd: /bin/bash)
+   ```
+4. **Notificação de Fallback:** Caso o `node-pty` apresente falha, um aviso é emitido uma única vez por sessão do VS Code com o motivo e um botão **"Abrir log"**, que direciona imediatamente para o canal de saída detalhando o erro original.
+
+---
+
 ## Solução de Problemas
 
 ### 1. O comando do agente não é encontrado (`command not found`)
@@ -102,8 +131,8 @@ Certifique-se de que a CLI do agente está instalada e disponível no seu `$PATH
 ### 2. O prompt do shell parece desconfigurado
 O Agent Terminal adiciona automaticamente a flag `-i` para forçar o bash/zsh a carregar scripts como Starship, Oh-My-Bash ou powerline. Caso tenha configurações condicionais no seu arquivo de inicialização, verifique se elas dependem da variável `TERM=xterm-256color`.
 
-### 3. Falha ao carregar backend nativo
-A extensão inclui uma camada de contingência automática em Python 3. Se por algum motivo o módulo Node nativo for bloqueado pelo sistema operacional, ela alternará automaticamente para o backend Python sem exigir nenhuma ação manual.
+### 3. Falha ou Incompatibilidade no Módulo Nativo
+Se após atualizar o VS Code o terminal emitir a notificação de fallback, o backend Python assumirá o controle de forma transparente. Para investigar, abra o Output Channel via comando `Agent Terminal: Show Output Log` para inspecionar a causa raiz.
 
 ---
 

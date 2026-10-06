@@ -2,12 +2,17 @@ import * as vscode from 'vscode';
 import { getPtyBackend } from './pty/getPtyBackend';
 import { SessionManager } from './sessionManager';
 import { TerminalViewProvider } from './terminalViewProvider';
+import { Logger } from './logger';
 
 let sessionManager: SessionManager | undefined;
+let logger: Logger | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-  const ptyBackend = getPtyBackend(context.extensionUri);
-  sessionManager = new SessionManager(ptyBackend);
+  logger = new Logger();
+  context.subscriptions.push(logger);
+
+  const ptyBackend = getPtyBackend(context.extensionUri, logger);
+  sessionManager = new SessionManager(ptyBackend, logger);
   context.subscriptions.push(sessionManager);
 
   const viewProvider = new TerminalViewProvider(context.extensionUri, sessionManager);
@@ -22,6 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
         },
       }
     )
+  );
+
+  // Command: Show Log
+  context.subscriptions.push(
+    vscode.commands.registerCommand('agentTerminal.showLog', () => {
+      logger?.show();
+    })
   );
 
   // Command: Focus Terminal
