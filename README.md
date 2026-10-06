@@ -4,6 +4,35 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ---
 
+## Demonstração do Layout
+
+<!-- Espaço reservado para a screenshot do layout -->
+```
++-------------------+-----------------------------+-----------------------+
+|  Explorer         |  Editor Principal           |  Agent Terminal       |
+|  - src/           |                             |  [ Terminal 1 ] [+]   |
+|  - package.json   |  export function main() {   |                       |
+|                   |    console.log("hello");    |  usuario@host:~/dir$  |
+|                   |  }                          |  claude               |
+|                   |                             |  > Analyzing code...  |
++-------------------+-----------------------------+-----------------------+
+|  TERMINAL NATIVO: usuario@host:~/dir$ npm test                          |
++-------------------------------------------------------------------------+
+```
+
+> **Visualização:** O terminal nativo do VS Code continua embaixo para comandos habituais (build, testes, git), enquanto a barra lateral direita hospeda a TUI do seu agente de IA com altura total.
+
+---
+
+## Requisitos de Sistema
+
+- **VS Code:** Versão `1.106.0` ou superior (versão mínima que suporta a declaração estável de `viewsContainers.secondarySidebar`).
+- **Sistemas Suportados:**
+  - **Linux e macOS:** Suporte oficial de primeira classe. Inclui aceleração nativa via `node-pty` e redundância com o fallback transparente em Python 3 (`pty_helper.py`).
+  - **Windows:** Suporte **não garantido**. O módulo nativo inclui suporte experimental a ConPTY, porém o fallback em Python não funciona em ambientes Windows devido à inexistência do módulo POSIX `pty` na biblioteca padrão do sistema operacional.
+
+---
+
 ## Principais Recursos
 
 - **Convivência sem conflitos:** O terminal inferior padrão do VS Code continua funcionando normalmente. O Agent Terminal fica na barra lateral direita.
@@ -26,24 +55,23 @@ Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na b
 
 ### Via Linha de Comando (.vsix)
 ```bash
-code --install-extension agent-terminal-0.1.0.vsix
+code --install-extension agent-terminal-0.1.1.vsix
 ```
 
 ### Pela Interface do VS Code
 1. Abra a aba de **Extensões** (`Ctrl+Shift+X`).
 2. Clique no menu de três pontos (`...`) no canto superior da lista de extensões.
-3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-0.1.0.vsix`.
+3. Selecione **Install from VSIX...** e escolha o arquivo `agent-terminal-0.1.1.vsix`.
 
 ---
 
 ## Como Posicionar na Barra Lateral Secundária
 
-No VS Code moderno (1.97+), o **Agent Terminal** já é registrado nativamente em `secondarySidebar` e deve aparecer no painel lateral à direita.
+No VS Code moderno (1.106+), o **Agent Terminal** já nasce automaticamente na **Secondary Side Bar** à direita.
 
-Se você estiver utilizando uma versão que posicione o container na Activity Bar esquerda ou se desejar reposicionar:
+Caso queira reposicionar:
 1. Pressione `Ctrl+Alt+B` (ou clique no ícone no canto superior direito do VS Code) para exibir a **Secondary Side Bar**.
-2. Clique no ícone do **Agent Terminal** e **arraste-o para a barra lateral secundária**.
-3. O VS Code memoriza essa posição permanentemente.
+2. Clique no ícone do **Agent Terminal** e arraste-o para a barra lateral que preferir. O VS Code memoriza essa posição permanentemente.
 
 ---
 
@@ -84,11 +112,12 @@ Você pode personalizar os agentes e opções no seu `settings.json`:
 ```
 
 O Agent Terminal também herda automaticamente suas preferências de terminal do VS Code:
-- `terminal.integrated.fontFamily`
+- `terminal.integrated.fontFamily` (com fallback para `editor.fontFamily` e `, monospace`)
 - `terminal.integrated.fontSize`
 - `terminal.integrated.lineHeight`
-- `terminal.integrated.cursorStyle`
-- `terminal.integrated.cursorBlink`
+- `terminal.integrated.letterSpacing`
+- `terminal.integrated.fontWeight` e `fontWeightBold`
+- `terminal.integrated.cursorStyle` e `cursorBlink`
 - `terminal.integrated.scrollback`
 - Cores do tema ativo do editor (`--vscode-terminal-*`)
 
@@ -159,4 +188,4 @@ npm run package
 
 ## Licença
 
-MIT License.
+MIT License - Copyright (c) 2026 Enthony Araujo.

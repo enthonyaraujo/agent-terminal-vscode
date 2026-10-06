@@ -1,5 +1,7 @@
 .vscode/**
 .vscode-test/**
+.git/**
+.github/**
 src/**
 test/**
 tsconfig.json
@@ -7,5 +9,7 @@ esbuild.js
 .gitignore
 *.vsix
 **/*.map
+.env*
+*.log
 node_modules/**
 !node_modules/@homebridge/**

@@ -3,18 +3,30 @@
   "displayName": "Agent Terminal",
   "description": "Dedicated sidebar terminal for AI CLI agents (Claude, Codex, Gemini, etc.) running alongside VS Code's native terminal.",
   "version": "0.1.1",
+  "publisher": "enthonyaraujo",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/enthony/agent-terminal-vscode"
+    "url": "https://github.com/enthonyaraujo/agent-terminal-vscode.git"
   },
-  "publisher": "enthony",
+  "bugs": {
+    "url": "https://github.com/enthonyaraujo/agent-terminal-vscode/issues"
+  },
+  "homepage": "https://github.com/enthonyaraujo/agent-terminal-vscode#readme",
+  "icon": "resources/icon.png",
   "engines": {
-    "vscode": "^1.97.0"
+    "vscode": "^1.106.0"
   },
   "categories": [
     "Terminal",
     "Other"
+  ],
+  "keywords": [
+    "terminal",
+    "ai",
+    "agents",
+    "cli",
+    "sidebar"
   ],
   "main": "./dist/extension.js",
   "activationEvents": [
