@@ -1,26 +1,26 @@
 # Agent CLI Terminal for Visual Studio Code
 
-Uma extensão leve e de alto desempenho que adiciona um **terminal dedicado na barra lateral secundária (Secondary Side Bar)**, projetado especificamente para executar agentes de IA via linha de comando (**Claude Code**, **Codex CLI**, **Gemini CLI**, **Antigravity CLI**, etc.) ocupando toda a altura da janela, sem interferir nem mover o terminal nativo do VS Code (aba inferior).
+A lightweight and high-performance extension that adds a **dedicated terminal to the Secondary Side Bar**, specifically designed to run AI CLI agents (**Claude Code**, **Codex CLI**, **Gemini CLI**, **Antigravity CLI**, etc.) taking up the full height of the window, without interfering with or moving VS Code's native terminal (bottom panel).
 
 ---
 
-## Demonstração do Layout
+## Layout Demonstration
 
-![Demonstração do Layout](resources/screenshot.png)
+![Layout Demonstration](resources/screenshot.png)
 
-> **Visualização:** O terminal nativo do VS Code continua embaixo para comandos habituais (build, testes, git), enquanto a barra lateral direita hospeda a TUI do seu agente de IA com altura total.
-
----
-
-## Requisitos de Sistema
-
-- **VS Code:** Versão `1.106.0` ou superior (versão mínima que suporta a declaração estável de `viewsContainers.secondarySidebar`).
-- **Sistemas Suportados:**
-  - **Linux e macOS:** Suporte oficial de primeira classe. Inclui aceleração nativa via `node-pty` e redundância com o fallback transparente em Python 3 (`pty_helper.py`).
-  - **Windows:** Suporte **não garantido**. O módulo nativo inclui suporte experimental a ConPTY, porém o fallback em Python não funciona em ambientes Windows devido à inexistência do módulo POSIX `pty` na biblioteca padrão do sistema operacional.
+> **Visualization:** VS Code's native terminal remains at the bottom for regular commands (build, tests, git), while the right sidebar hosts your AI agent's TUI at full height.
 
 ---
 
-## Licença
+## System Requirements
+
+- **VS Code:** Version `1.106.0` or higher (minimum version supporting stable `viewsContainers.secondarySidebar` declaration).
+- **Supported Systems:**
+  - **Linux and macOS:** First-class official support. Includes native acceleration via `node-pty` and transparent fallback redundancy using Python 3 (`pty_helper.py`).
+  - **Windows:** Support **not guaranteed**. The native module includes experimental ConPTY support, but the Python fallback does not work in Windows environments due to the absence of the POSIX `pty` module in the OS standard library.
+
+---
+
+## License
 
 MIT License - Copyright (c) 2026 Enthony Araujo.
