@@ -4,6 +4,11 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) e este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.0.1] - 2026-10-08
+
+### Alterado
+- **Documentação Simplificada no README:** Atualização e síntese do README.md para exibição direta e objetiva no VS Code Marketplace e GitHub.
+
 ## [1.0.0] - 2026-10-06
 
 ### Lançamento Oficial (Produção)
